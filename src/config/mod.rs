@@ -1,39 +1,17 @@
+mod window;
+mod font;
+
 use serde::{Deserialize, Serialize};
 
 use crate::constants::APPLICATION_NAME;
 
-fn get_default_size() -> (u32, u32) {
-    (800, 600)
-}
-
-fn get_default_title() -> String {
-    String::from("ScuderiaTerm")
-}
-
-fn get_default_background_color() -> (f32, f32, f32, f32) {
-    (0.0, 0.0, 0.0, 1.0)
-}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScuderiaTermConfig {
-    #[serde(default = "get_default_size")]
-    /// The size of the window, in pixels.
-    /// The default value is `(800, 600)`.
-    pub size: (u32, u32),
-    #[serde(default = "get_default_title")]
-    /// The title of the window.
-    /// The default value is `"ScuderiaTerm"`.
-    pub title: String,
-    #[serde(default = "get_default_background_color")]
-    /// The background color of the window.
-    /// The default value is `Color::BLACK`.
-    /// TODO: implement ser-de for iced::Color
-    pub background_color: (f32, f32, f32, f32),
     #[serde(default)]
-    /// The background image of the window.
-    /// The default value is `None`.
-    /// TODO: implement ser-de for iced::Image
-    pub background_image: Option<String>,
+    pub window: window::ScuderiaTermWindowConfig,
+    #[serde(default)]
+    pub font: font::ScuderiaTermFontConfig,
 }
 
 impl ScuderiaTermConfig {
@@ -51,10 +29,8 @@ impl ScuderiaTermConfig {
 
     pub fn new() -> Self {
         Self {
-            size: (800, 600),
-            title: String::from("ScuderiaTerm"),
-            background_color: (0.0, 0.0, 0.0, 1.0),
-            background_image: None,
+            window: window::ScuderiaTermWindowConfig::default(),
+            font: font::ScuderiaTermFontConfig::default(),
         }
     }
 
@@ -67,6 +43,10 @@ impl ScuderiaTermConfig {
         match config {
             Ok(config) => {
                 let config: ScuderiaTermConfig = toml::from_str(&config).unwrap();
+                if cfg!(debug_assertions) {
+                    println!("Loaded config: {:?}", config);
+                }
+                std::fs::write(Self::get_config_path(), toml::to_string(&config).unwrap()).unwrap();
                 config
             }
             Err(_) => {
@@ -80,9 +60,4 @@ impl ScuderiaTermConfig {
             }
         }
     }
-
-    // pub fn save(&self) -> () {
-    //     let config = toml::to_string(&self).unwrap();
-    //     std::fs::write(Self::get_config_path(), config).unwrap();
-    // }
 }
