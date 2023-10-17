@@ -2,9 +2,10 @@ mod command;
 mod config;
 mod constants;
 
+use iced::executor;
 use iced::theme::palette::Palette;
 use iced::widget::column;
-use iced::{executor, Application, Color, Sandbox, Settings, Theme};
+use iced::{Application, Color, Settings, Theme};
 
 fn main() -> iced::Result {
     ScuderiaTerm::run(Settings::default())
@@ -31,18 +32,19 @@ impl Application for ScuderiaTerm {
         self.config.title.clone()
     }
 
-    fn new(flags: Self::Flags) -> (Self, iced::Command<Self::Message>) {
+    fn new(_flags: Self::Flags) -> (Self, iced::Command<Self::Message>) {
         let config = config::ScuderiaTermConfig::load();
         let history = Vec::new();
 
         (Self { config, history }, iced::Command::none())
     }
 
-    fn update(&mut self, message: Self::Message) -> iced::Command<Self::Message> {
+    fn update(&mut self, _message: Self::Message) -> iced::Command<Self::Message> {
         iced::Command::none()
     }
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
+        print!("{:?}", self.history);
         column![].into()
     }
 

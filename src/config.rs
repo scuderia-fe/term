@@ -1,4 +1,3 @@
-use dirs::config_dir;
 use serde::{Deserialize, Serialize};
 
 use crate::constants::APPLICATION_NAME;
@@ -63,7 +62,7 @@ impl ScuderiaTermConfig {
         let config_path = Self::get_config_path();
         let app_dir = Self::get_app_dir();
 
-        let config = std::fs::read_to_string(&config_path);
+        let config = std::fs::read_to_string(config_path);
 
         match config {
             Ok(config) => {
@@ -82,8 +81,8 @@ impl ScuderiaTermConfig {
         }
     }
 
-    pub fn save(&self) -> () {
-        let config = toml::to_string(&self).unwrap();
-        std::fs::write(Self::get_config_path(), config).unwrap();
-    }
+    // pub fn save(&self) -> () {
+    //     let config = toml::to_string(&self).unwrap();
+    //     std::fs::write(Self::get_config_path(), config).unwrap();
+    // }
 }
